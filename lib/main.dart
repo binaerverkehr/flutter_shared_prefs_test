@@ -90,6 +90,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
               },
             ),
+            ElevatedButton(
+              onPressed: () async {
+                final SharedPreferences prefs = await _prefs;
+                prefs.remove('counter').then((success) {
+                  final counter = prefs.getInt('counter') ?? 0;
+                  setState(() {
+                    _counter = prefs.setInt('counter', counter).then((bool success) {
+                      return counter;
+                    });
+                  });
+                  return success;
+                });
+              },
+              child: const Text("Delete"),
+            )
           ],
         ),
       ),
