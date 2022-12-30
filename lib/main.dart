@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //* 1. Create instance of SharedPreferences
+  final _prefs = SharedPreferences.getInstance();
+
   int _counter = 0;
 
   void _incrementCounter() {
