@@ -33,11 +33,16 @@ class _MyHomePageState extends State<MyHomePage> {
   //* 1. Create instance of SharedPreferences
   final _prefs = SharedPreferences.getInstance();
 
-  int _counter = 0;
+  late Future<int> _counter;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
+    final SharedPreferences prefs = await _prefs;
+    final int counter = (prefs.getInt('counter') ?? 0) + 1;
+
     setState(() {
-      _counter++;
+      _counter = prefs.setInt('counter', counter).then((bool success) {
+        return counter;
+      });
     });
   }
 
