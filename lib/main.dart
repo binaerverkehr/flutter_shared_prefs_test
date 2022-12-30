@@ -33,16 +33,29 @@ class _MyHomePageState extends State<MyHomePage> {
   //* 1. Create instance of SharedPreferences
   final _prefs = SharedPreferences.getInstance();
 
+  //* 2. Change counter variable from int to Future<int>
   late Future<int> _counter;
 
   void _incrementCounter() async {
+    //* 3. Await SharedPreferences instance
     final SharedPreferences prefs = await _prefs;
+    //* 4. Increase counter
     final int counter = (prefs.getInt('counter') ?? 0) + 1;
 
     setState(() {
+      //* 5. Save counter value on device
       _counter = prefs.setInt('counter', counter).then((bool success) {
         return counter;
       });
+    });
+  }
+
+  //* 6. Initialze counter variable
+  @override
+  void initState() {
+    super.initState();
+    _counter = _prefs.then((SharedPreferences prefs) {
+      return prefs.getInt('counter') ?? 0;
     });
   }
 
@@ -59,9 +72,23 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            FutureBuilder(
+              future: _counter,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const CircularProgressIndicator();
+                  default:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return Text(
+                        '${snapshot.data}',
+                        style: Theme.of(context).textTheme.headline4,
+                      );
+                    }
+                }
+              },
             ),
           ],
         ),
